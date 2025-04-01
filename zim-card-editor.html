@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>ZIM Card Editor</title>
+<script>document.Blob = Blob; document.Window = Window;</script>
+
+<script type="module">
+import zim from "https://zimjs.org/cdn/017/zim";
+import { ZIMCard } from "./zim-card-component.js";
+import { ZIM_CARD_SAMPLE_DATA, ZIM_CARD_DEFAULT_CONFIG } from "./zim-card-samples.js";
+import { ZIM_CARD_ALLOWED_COLORS } from "./zim-card-styles.js";
+
+const FRAME_CONFIG = {
+    scaling: FIT,
+    width: 1024,
+    height: 768,
+    color: light,
+    outerColor: dark,
+    assets: [{id:'test-asset', src:'test-asset.png'}],
+    path: "/assets/",
+    sensors: true
+};
+
+new Frame({...FRAME_CONFIG, ready});
+
+function ready(frame, stage, stageW, stageH) {
+    // Create a single card with default settings
+    const editorCard = new ZIMCard(ZIM_CARD_DEFAULT_CONFIG);
+
+    // Center the card on the stage
+    editorCard.center();
+
+    // Add design switcher
+    const designToggleButton = new Button(200, 50, "Switch Design")
+        .pos(50, 50, LEFT, TOP)
+        .cur();
+    
+    designToggleButton.on("click", () => {
+        const newDesign = editorCard.currentDesign === "Classic" ? "Modern" : "Classic";
+        editorCard.currentDesign = newDesign;
+        editorCard.applyDesign(newDesign);
+        S.update();
+    });
+
+    // Add color picker
+    const colorToggleButton = new Button(200, 50, "Change Color")
+        .pos(50, 120, LEFT, TOP)
+        .cur();
+    
+    colorToggleButton.on("click", () => {
+        const newColor = ZIM_CARD_ALLOWED_COLORS[zim.rand(0, ZIM_CARD_ALLOWED_COLORS.length - 1)];
+        editorCard.color = newColor;
+        editorCard.backgroundLayer.color = newColor;
+        if (editorCard.titleLabel.parent !== editorCard.contentWindow) {
+            editorCard.titleLabel.backgroundColor = newColor;
+        }
+        S.update();
+    });
+
+    // Add sample data toggle
+    const sampleDataButton = new Button(200, 50, "Next Sample")
+        .pos(50, 190, LEFT, TOP)
+        .cur();
+    
+    let currentSampleIndex = 0;
+    sampleDataButton.on("click", () => {
+        currentSampleIndex = (currentSampleIndex + 1) % ZIM_CARD_SAMPLE_DATA.length;
+        editorCard.updateCard(ZIM_CARD_SAMPLE_DATA[currentSampleIndex]);
+    });
+
+	 // Add index button
+    const indexButton = new Button(200, 50, "Home")
+        .pos(50, 260, LEFT, TOP)
+        .cur();
+    
+    indexButton.on("click", () => {
+        zgo("index.html");
+    });
+
+    // Update the stage
+    S.update();
+}
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+</head>
+<body>
+</body>
+</html> 

@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>ZIM Card Gallery</title>
+<script>document.Blob = Blob; document.Window = Window;</script>
+
+<script type="module">
+import zim from "https://zimjs.org/cdn/017/zim";
+import { ZIMCard } from "./zim-card-component.js";
+import { ZIM_CARD_SAMPLE_DATA } from "./zim-card-samples.js";
+
+const FRAME_CONFIG = {
+    scaling: FIT,
+    width: 1024,
+    height: 768,
+    color: light,
+    outerColor: dark,
+    assets: [{id:'test-asset', src:'test-asset.png'}],
+    path: "/assets/",
+    sensors: true
+};
+
+new Frame({...FRAME_CONFIG, ready});
+
+function ready(frame, stage, stageW, stageH) {
+    // Create the cards array using sample data
+    const galleryCards = shuffle(ZIM_CARD_SAMPLE_DATA).map(data => new ZIMCard(data));
+
+    // Randomly place cards on the stage
+    galleryCards.forEach(card => card.pos(zim.rand(0, stageW - card.width), zim.rand(0, stageH - card.height)));
+
+    // Update the stage
+    S.update();
+}
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+</head>
+<body>
+</body>
+</html> 

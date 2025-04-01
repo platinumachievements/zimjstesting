@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>ZIM Card Gallery</title>
+<script>document.Blob = Blob; document.Window = Window;</script>
+
+<script type="module">
+import zim from "https://zimjs.org/cdn/017/zim";
+import { ZIMCard } from "./zim-card-component.js";
+import { ZIM_CARD_SAMPLE_DATA } from "./zim-card-samples.js";
+
+const FRAME_CONFIG = {
+    scaling: FIT,
+    width: 1024,
+    height: 768,
+    color: light,
+    outerColor: dark,
+    assets: [{id:'test-asset', src:'test-asset.png'}],
+    path: "/assets/",
+    sensors: true
+};
+
+new Frame({...FRAME_CONFIG, ready});
+
+function ready(frame, stage, stageW, stageH) {
+    // Create a window with padding and scrollbar
+    const window = new Window({
+        padding: 20,
+        borderColor: grey,
+        backgroundColor: clear,
+        scrollBarDrag: true
+    }).center();
+
+    window.scrollBar.size = 15;
+    window.update();
+
+    // Create the cards array using sample data and scale them down
+    const gridCards = shuffle(ZIM_CARD_SAMPLE_DATA).map(data => {
+        const card = new ZIMCard(data);
+        card.sca(.5); // Scale down
+        // Disable dragging on the background layer
+        card.backgroundLayer.noMouse();
+        return card;
+    });
+
+    // Set up the grid layout style
+    STYLE = {
+        align: CENTER,
+        spacingH: 20,
+        spacingV: 20,
+        wrapperType: "spread"
+    };
+
+    // Create wrapper with cards
+    const wrapper = new Wrapper(gridCards);
+
+    // Add a backing rectangle for scrolling between cards
+    const backing = new Rectangle(100, 100, faint);
+    window.add(backing);
+    window.add(wrapper);
+
+    // Handle window resize
+    frame.on("resize", () => {
+        window.resize(stageW * 0.9, stageH * 0.9).center();
+        backing.siz(wrapper.width, wrapper.height);
+    });
+}
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+</head>
+<body>
+</body>
+</html> 

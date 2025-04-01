@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>ZIM Card System - Entry</title>
+<script>document.Blob = Blob; document.Window = Window;</script>
+
+<script type="module">
+import zim from "https://zimjs.org/cdn/017/zim";
+import { ZIMCard } from "./zim-card-component.js";
+import { ZIM_CARD_SAMPLE_DATA } from "./zim-card-samples.js";
+
+const FRAME_CONFIG = {
+    scaling: FIT,
+    width: 1024,
+    height: 768,
+    color: light,
+    outerColor: dark,
+    assets: [{id:'test-asset', src:'test-asset.png'}],
+    path: "/assets/",
+    sensors: true
+};
+
+new Frame({...FRAME_CONFIG, ready});
+
+function ready(frame, stage, stageW, stageH) {
+    // Create a window for the menu
+    const window = new Window({
+        padding: 40,
+        borderColor: grey,
+        backgroundColor: clear,
+        width: stageW * 0.8,
+        height: stageH * 0.8
+    }).center();
+
+    // Create title
+    new Label({
+        text: "ZIM Card System",
+        size: 40,
+        color: dark,
+        align: CENTER
+    }).pos(0, 20, CENTER, TOP, window);
+
+    // Create description
+    new Label({
+        text: "Choose a view to explore the card system",
+        size: 20,
+        color: grey,
+        align: CENTER
+    }).pos(0, 80, CENTER, TOP, window);
+
+    // Create menu container
+    const menuContainer = new Container();
+    menuContainer.pos(0, 150, CENTER, TOP, window);
+
+    // Create menu items
+    const menuItems = [
+        { text: "Card Editor", href: "zim-card-editor.html", desc: "Edit and customize cards" },
+        { text: "Card Grid", href: "zim-card-grid.html", desc: "View all cards in a grid" },
+        { text: "Card Gallery", href: "zim-card-gallery.html", desc: "Interactive gallery view" }
+    ];
+
+    // Add menu items with spacing
+    menuItems.forEach((item, index) => {
+        const button = new Button(300, 60, item.text, dark, charcoal)
+            .pos(0, index * 100, CENTER, TOP, menuContainer)
+            .cur();
+
+        new Label({
+            text: item.desc,
+            size: 16,
+            color: grey,
+            align: CENTER
+        }).pos(0, 70, CENTER, TOP, button);
+
+        button.on("mousedown", () => {
+            zgo(item.href);
+        });
+    });
+
+    // Add sample card previews
+    const sampleCards = ZIM_CARD_SAMPLE_DATA.slice(0, 5).map(data => new ZIMCard(data));
+    sampleCards.forEach((card, index) => {
+        card.sca(.2);
+        card.pos(-200 + (index * 100), stageH * 0.7, CENTER, TOP);
+    });
+
+    // Add version info
+    new Label({
+        text: "Powered by ZIM.js",
+        size: 14,
+        color: grey,
+        align: CENTER
+    }).pos(0, stageH - 20, CENTER, TOP);
+}
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+</head>
+<body>
+</body>
+</html> 
